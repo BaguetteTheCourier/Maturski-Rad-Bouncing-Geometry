@@ -17,8 +17,19 @@ backgroundLayer5.src = 'poz5.png';
 const backgroundLayer6 = new Image();
 backgroundLayer6.src = 'poz6.png';
 
-const playerImage = new Image();
-playerImage.src = 'krugv2.png';
+// const playerImage = new Image();
+// playerImage.src = 'krug.png';
+const PLAYER_FRAMES = 5; // Number of animation frames
+let playerImages = [];
+let playerImageIndex = 0;
+
+// Preload all player animation frames ONCE
+for (let i = 0; i < PLAYER_FRAMES; i++) {
+    let img = new Image();
+    img.src = `kocka${i}.png`; // Make sure your files are named krug0.png, krug1.png, ..., krug9.png
+    playerImages.push(img);
+}
+
 let playerHeight = 48;
 let playerWidth = 48;
 let playerX = CANVAS_WIDTH/8;
@@ -47,6 +58,14 @@ let gravity = 0.3;
 
 let gameOver = false;
 let score = 0;
+
+// Add these variables near your animation variables:
+let playerAnimFrameCounter = 0;
+const PLAYER_ANIM_FPS = 8; // Lower FPS (e.g., 8 frames per second)
+const PLAYER_ANIM_INTERVAL = Math.floor(60 / PLAYER_ANIM_FPS); // Assuming 60fps game loop
+
+let gameStarted = false;
+let gamePaused = true;
 
 class Layer 
 {
@@ -95,9 +114,13 @@ const gameObjects = [layer1, layer2, layer3, layer4, layer5, layer6];
 
 function animate() 
 {
+    if (gamePaused) return;
 
     if (gameOver)
     {
+        ctx.fillStyle = "white";
+        ctx.font = "30px Arial";
+        ctx.fillText("Game Over", CANVAS_WIDTH / 2 - 50, CANVAS_HEIGHT / 2);
         return;
     }
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -105,7 +128,14 @@ function animate()
         object.update();
         object.draw();
     });
-    ctx.drawImage(playerImage, player.x, player.y, player.width, player.height);
+
+    // Lower the player animation FPS
+    if (playerAnimFrameCounter % PLAYER_ANIM_INTERVAL === 0) {
+        playerImageIndex = (playerImageIndex + 1) % PLAYER_FRAMES;
+    }
+    ctx.drawImage(playerImages[playerImageIndex], player.x, player.y, player.width, player.height);
+    playerAnimFrameCounter++;
+
     requestAnimationFrame(animate);
 
     if (player.y > canvas.height)
@@ -121,10 +151,11 @@ function animate()
 
         if (!pipe.passed && player.x > pipe.x + pipe.width)
         {
-            score += 0.5; // Ensure only one point is added
-            pipe.passed = true; // Mark the pipe as passed
+            score += 0.5;
+            pipe.passed = true;
         }
 
+        // Fix collision: use player.y + player.height instead of b.height
         if (detectCollission(player, pipe))
         {
             gameOver = true;
@@ -151,7 +182,6 @@ function animate()
     }
 
 };
-animate();
 
 setInterval(placePipes, 1500);
 
@@ -161,7 +191,7 @@ function placePipes() {
     {
         return;
     }
-    const gap = 180; // Increased gap from 150 to 180
+    const gap = 180;
     const groundHeight = 90;
     const minPipeTopY = -pipeHeight + 50;
     const maxPipeTopY = CANVAS_HEIGHT - groundHeight - gap - pipeHeight;
@@ -192,24 +222,93 @@ function placePipes() {
 
 function moveFigure(e)
 {
-    if (e.code == "Space" || e.code == "ArrowUp" || e.code == "OnClick")
+    if (
+        e.code == "Space" || e.code == "ArrowUp" || e.type === "mousedown")
     {
         velocityY = -6;
 
-        // Reset the game
         if (gameOver)
         {
             player.y = playerY;
             pipeArray = [];
             score = 0;
             gameOver = false;
-            velocityY = 0; // Reset vertical velocity
-            animate(); // Restart the animation loop
+            velocityY = 0;
+            animate();
         }
     }
-};
+}
+
+document.addEventListener("keydown", moveFigure);
+canvas.addEventListener("mousedown", moveFigure);
 
 function detectCollission(a, b)
 {
-    return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
+    // Fix: use a.y + a.height (not b.height) for bottom of player
+    return a.x < b.x + b.width &&
+           a.x + a.width > b.x &&
+           a.y < b.y + b.height &&
+           a.y + a.height > b.y;
 };
+
+
+function drawStaticFrame() {
+    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    gameObjects.forEach(object => {
+        object.draw();
+    });
+    // Only draw player if character selection is not visible
+    if (document.getElementById('characterSelection').style.display !== 'block') {
+        ctx.drawImage(playerImages[playerImageIndex], player.x, player.y, player.width, player.height);
+    }
+    pipeArray.forEach(pipe => {
+        ctx.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
+    });
+    ctx.fillStyle = "white";
+    ctx.font = "30px Arial";
+    ctx.fillText("Score: " + score, 5, 45);
+}
+
+const characterFrames = {
+    triangle: ['trougao0.png', 'trougao1.png', 'trougao2.png', 'trougao3.png', 'trougao4.png', 'trougao5.png', 'trougao6.png', 'trougao7.png'],
+    circle:   ['krug0.png', 'krug1.png', 'krug2.png', 'krug3.png', 'krug4.png', 'krug5.png', 'krug6.png', 'krug7.png', 'krug8.png', 'krug9.png', 'krug10.png'],
+    cross:    ['iks0.png', 'iks1.png', 'iks2.png', 'iks3.png', 'iks4.png', 'iks5.png',],
+    square:   ['kocka0.png', 'kocka1.png', 'kocka2.png', 'kocka3.png', 'kocka4.png']
+};
+
+function showCharacterSelection() {
+    document.getElementById('characterSelection').style.display = 'block';
+    drawStaticFrame();
+}
+
+function selectCharacter(type) {
+    playerImages = [];
+    for (let i = 0; i < PLAYER_FRAMES; i++) {
+        let img = new Image();
+        img.src = characterFrames[type][i];
+        playerImages.push(img);
+    }
+    playerImageIndex = 0;
+    document.getElementById('characterSelection').style.display = 'none';
+    document.getElementById('startOverlay').style.display = 'flex';
+    gamePaused = true;
+    gameStarted = false;
+    drawStaticFrame();
+}
+
+document.getElementById('startGameBtn').addEventListener('click', function() {
+    document.getElementById('mainMenuOverlay').style.display = 'none';
+    showCharacterSelection();
+});
+
+document.getElementById('charSelTriangle').onclick = () => selectCharacter('triangle');
+document.getElementById('charSelCircle').onclick   = () => selectCharacter('circle');
+document.getElementById('charSelCross').onclick    = () => selectCharacter('cross');
+document.getElementById('charSelSquare').onclick   = () => selectCharacter('square');
+
+document.getElementById('startBtn').addEventListener('click', function() {
+    document.getElementById('startOverlay').style.display = 'none';
+    gamePaused = false;
+    gameStarted = true;
+    animate();
+});
