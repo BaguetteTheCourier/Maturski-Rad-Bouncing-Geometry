@@ -1,7 +1,18 @@
 const canvas = document.getElementById('canvas1');
 const ctx = canvas.getContext('2d');
-const CANVAS_WIDTH = canvas.width = 832;
-const CANVAS_HEIGHT = canvas.height = 556;
+
+// Responsive canvas size
+let isMobile = window.innerWidth <= 600;
+if (isMobile) {
+    canvas.width = 277;
+    canvas.height = 556;
+} else {
+    canvas.width = 832;
+    canvas.height = 556;
+}
+const CANVAS_WIDTH = canvas.width;
+const CANVAS_HEIGHT = canvas.height;
+
 let gameSpeed = 6;
 
 const backgroundLayer1 = new Image();
@@ -242,6 +253,11 @@ function moveFigure(e)
 document.addEventListener("keydown", moveFigure);
 canvas.addEventListener("mousedown", moveFigure);
 
+canvas.addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    moveFigure({type: "mousedown"});
+}, {passive: false});
+
 function detectCollission(a, b)
 {
     // Fix: use a.y + a.height (not b.height) for bottom of player
@@ -312,3 +328,65 @@ document.getElementById('startBtn').addEventListener('click', function() {
     gameStarted = true;
     animate();
 });
+
+function setPCPhysics() {
+    gameSpeed = 6;
+    gravity = 0.3;
+    velocityX = -2;
+    player.width = 48;
+    player.height = 48;
+    player.x = CANVAS_WIDTH / 8;
+    player.y = CANVAS_HEIGHT / 2;
+    pipeHeight = CANVAS_HEIGHT;
+    pipeWidth = pipeHeight * (66 / 460);
+}
+
+function setMobilePhysics() {
+    gameSpeed = 2.5;        // Slightly slower for mobile
+    gravity = 0.2;         // Less gravity for easier control
+    velocityX = -1.5;       // Slower pipe movement
+    player.width = 48;      // Same size for consistency
+    player.height = 48;
+    player.x = CANVAS_WIDTH / 8;
+    player.y = CANVAS_HEIGHT / 2;
+    pipeHeight = CANVAS_HEIGHT;
+    pipeWidth = pipeHeight * (66 / 460);
+}
+
+// Call the correct function on load and resize
+function setGamePhysicsForDevice() {
+    if (isMobile) {
+        setMobilePhysics();
+    } else {
+        setPCPhysics();
+    }
+}
+setGamePhysicsForDevice();
+
+window.addEventListener('resize', () => {
+    let wasMobile = isMobile;
+    isMobile = window.innerWidth <= 600;
+    if (isMobile !== wasMobile) {
+        if (isMobile) {
+            canvas.width = 277;
+            canvas.height = 556;
+        } else {
+            canvas.width = 832;
+            canvas.height = 556;
+        }
+        setGamePhysicsForDevice();
+    }
+});
+
+function updatePlayButtonImage() {
+    const playBtnImg = document.getElementById('playBtnImg');
+    if (window.innerWidth <= 600) {
+        playBtnImg.src = 'play mobilni.png'; // Your mobile play button image
+    } else {
+        playBtnImg.src = 'mainmenu dugme.png'; // Your desktop play button image
+    }
+}
+
+// Run on load and resize
+window.addEventListener('DOMContentLoaded', updatePlayButtonImage);
+window.addEventListener('resize', updatePlayButtonImage);

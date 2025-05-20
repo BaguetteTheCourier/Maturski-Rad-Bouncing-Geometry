@@ -140,18 +140,20 @@ body {
 
 #startOverlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 832px;
-    height: 556px;
-    z-index: 1001;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
     top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
+    
+    width: 90vw;
+    max-width: 832px;
+    aspect-ratio: 832 / 556;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1001;
+
+    pointer-events: auto;
 }
 
 .start-btn {
@@ -168,29 +170,41 @@ body {
 
 #characterSelection {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 832px;
-    height: 556px;
-    top: 55%; /* Match canvas top */
+    top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1002;
+    
+    width: 90vw;
+    max-width: 832px;
+    aspect-ratio: 832 / 556;
+
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 1002;
+
     pointer-events: auto;
 }
 
+
 .charSelBtn {
     position: absolute;
-    width: 100px;
-    height: 100px;
+    width: 12%;
+    aspect-ratio: 1;
     background: transparent;
     border: none;
     cursor: pointer;
     outline: none;
 }
+
+.charSelBtn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    user-select: none;
+    pointer-events: none;
+}
+
 
 .charSelTriangle {
     top: 40px;
@@ -214,6 +228,60 @@ body {
     left: 25%;
     transform: translateY(-50%);
     /* background-image: url('square.png'); */
+}
+
+@media (max-width: 600px) {
+    .canvas-container {
+        width: 277px !important;
+        height: 556px !important;
+        max-width: 100vw !important;
+    }
+    #canvas1,
+    #mainMenuOverlay,
+    #characterSelection,
+    #startOverlay {
+        width: 277px !important;
+        height: 556px !important;
+        max-width: 100vw !important;
+        left: 50% !important;
+        top: 55% !important;
+        transform: translate(-50%, -50%) !important;
+    }
+    .charSelBtn {
+        width: 64px !important;
+        height: 64px !important;
+        min-width: 64px !important;
+        min-height: 64px !important;
+        max-width: 80px !important;
+        max-height: 80px !important;
+    }
+    .charSelTriangle {
+        top: 24px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+    .charSelCircle {
+        top: 50% !important;
+        right: 24px !important;
+        transform: translateY(-50%) !important;
+    }
+    .charSelCross {
+        bottom: 24px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+    .charSelSquare {
+        top: 50% !important;
+        left: 24px !important;
+        transform: translateY(-50%) !important;
+    }
+    #mainMenuContent {
+        background-image: url('main\ menu\ mobilni.png') !important;
+    }
+    .main-menu-btn {
+        left: 10px !important;
+        top: 60% !important;
+    }
 }
 
 

@@ -1,0 +1,260 @@
+body {
+    padding-top: 70px;
+    margin: 0;
+    overflow-x: hidden; /* Allow vertical scroll, prevent horizontal */
+    color: #fff; /* Make all text white by default */
+}
+
+.background-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100svh;
+    background: url("pozadina.png") no-repeat center center/cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Start from top, not center */
+    padding-top: 100px; /* Space for navbar */
+    box-sizing: border-box;
+    overflow-y: auto; /* Allow vertical scrolling if needed */
+}
+
+.background-image::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100svh;
+    backdrop-filter: blur(5px);
+    z-index: -1;
+}
+
+
+.navbar-custom {
+    background-color: #141625;
+}
+
+.navbar-custom .navbar-toggler,
+.navbar-custom .navbar-brand,
+.navbar-custom .navbar-text {
+    color: #3958cb;
+}
+
+
+.navbar-custom .nav-link.active {
+    color: #3958cb;
+    font-weight: bold;
+}
+
+
+.navbar-custom .nav-link:hover {
+    color: #152859;
+}
+
+
+.navbar-nav .nav-item {
+    border-right: 1px solid #000000;
+}
+
+.navbar-nav .nav-item:last-child {
+    border-right: none;
+}
+
+.example-2 {
+  display: flex;
+  justify-content: center; /* Center the icons horizontally */
+  align-items: flex-start; /* Align icons at the top */
+  position: relative; /* Needed for tooltip positioning */
+}
+
+/* Each icon and tooltip pair */
+.example-2 .icon-content {
+  position: relative;
+  margin: 0 15px; /* Space between icons */
+}
+
+/* Tooltip styling */
+.example-2 .icon-content .tooltip {
+  position: absolute;
+  top: -35px; /* Position the tooltip slightly above the icon */
+  left: 50%; /* Center the tooltip horizontally relative to the icon */
+  transform: translateX(-50%); /* Ensure the tooltip is perfectly centered */
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 5px;
+  opacity: 0;
+  visibility: hidden;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+/* Tooltip visible when hovering over the icon */
+.example-2 .icon-content:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  top: -45px; /* Slightly higher position when hovered */
+}
+
+/* Icon link styling */
+.example-2 .icon-content a {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  color: #4d4d4d;
+  background-color: #0F1D26;
+  transition: all 0.3s ease-in-out;
+}
+
+.example-2 .icon-content a:hover {
+  box-shadow: 3px 2px 45px 0px rgb(0 0 0 / 12%);
+}
+
+.example-2 .icon-content a svg {
+  position: relative;
+  z-index: 1;
+  width: 30px;
+  height: 30px;
+}
+
+.example-2 .icon-content a:hover {
+  color: rgb(155, 142, 142);
+}
+
+.example-2 .icon-content a .filled {
+  position: absolute;
+  top: auto;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  background-color: #000;
+  transition: all 0.3s ease-in-out;
+}
+
+.example-2 .icon-content a:hover .filled {
+  height: 100%;
+}
+
+.example-2 .icon-content a[data-social="linkedin"] .filled,
+.example-2 .icon-content a[data-social="linkedin"] ~ .tooltip {
+  background-color: #0274b3;
+}
+
+.example-2 .icon-content a[data-social="github"] .filled,
+.example-2 .icon-content a[data-social="github"] ~ .tooltip {
+  background-color: #24262a;
+}
+
+.example-2 .icon-content a[data-social="instagram"] .filled,
+.example-2 .icon-content a[data-social="instagram"] ~ .tooltip {
+  background: linear-gradient(
+    45deg,
+    #405de6,
+    #5b51db,
+    #b33ab4,
+    #c135b4,
+    #e1306c,
+    #fd1f1f
+  );
+}
+
+.example-2 .icon-content a[data-social="youtube"] .filled,
+.example-2 .icon-content a[data-social="youtube"] ~ .tooltip {
+  background-color: #ff0000;
+}
+
+/* Tooltip Styling */
+        .icon-content {
+            position: relative;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .tooltip {
+            display: none;
+            position: absolute;
+            top: -30px; /* Adjusted positioning for tooltip */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .icon-content:hover .tooltip {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Social Icons Section - Ensure flex and wrap */
+        .example-2 {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            list-style: none;
+            padding: 0;
+        }
+
+        .icon-content {
+            margin: 10px;
+            position: relative;
+        }
+
+        .tooltip {
+            display: none;
+        }
+
+.polje {
+    position: static; /* Remove absolute positioning */
+    top: auto;
+    left: auto;
+    transform: none;
+    margin-bottom: 24px; /* Space between polje divs */
+    background: rgba(2, 56, 68, 0.4);
+    border-radius: 10px;
+    border: 10px solid rgba(125, 235, 255, 0.184);
+    backdrop-filter: blur(10px);
+    padding: 20px 50px;
+    text-align: center;
+    width: 600px;         /* Increased width for readability */
+    max-width: 90vw;      /* Responsive: never exceed viewport */
+    min-width: 320px;     /* Prevent too narrow on mobile */
+    display: block;
+    box-sizing: border-box;
+    word-break: break-word;
+    color: #fff; /* Ensure text inside .polje is white */
+}
+
+/* Optionally, make headings white if needed */
+.polje h2, .polje h4, .polje h3, .polje p {
+    color: #fff;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 700px) {
+    .polje {
+        width: 95vw;
+        padding: 16px 8px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .polje {
+        min-width: 0;
+        font-size: 0.95rem;
+        padding: 10px 2px;
+    }
+}
