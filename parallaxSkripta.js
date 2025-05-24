@@ -28,13 +28,12 @@ backgroundLayer5.src = 'poz5.png';
 const backgroundLayer6 = new Image();
 backgroundLayer6.src = 'poz6.png';
 
-// const playerImage = new Image();
-// playerImage.src = 'krug.png';
-const PLAYER_FRAMES = 5; // Number of animation frames
+
+const PLAYER_FRAMES = 5; 
 let playerImages = [];
 let playerImageIndex = 0;
 
-// Preload all player animation frames ONCE
+
 for (let i = 0; i < PLAYER_FRAMES; i++) {
     let img = new Image();
     img.src = `kocka${i}.png`; // Make sure your files are named krug0.png, krug1.png, ..., krug9.png
@@ -70,6 +69,10 @@ let gravity = 0.3;
 let gameOver = false;
 let score = 0;
 
+let flySound = new Audio('fly.mp3');
+let gameOverSound = new Audio('gameover.mp3');
+let buttonClick = new Audio('buttonClick.mp3');
+
 // Add these variables near your animation variables:
 let playerAnimFrameCounter = 0;
 const PLAYER_ANIM_FPS = 8; // Lower FPS (e.g., 8 frames per second)
@@ -77,6 +80,8 @@ const PLAYER_ANIM_INTERVAL = Math.floor(60 / PLAYER_ANIM_FPS); // Assuming 60fps
 
 let gameStarted = false;
 let gamePaused = true;
+
+let scoreSaved = false; // Add this at the top of your script
 
 class Layer 
 {
@@ -130,8 +135,8 @@ function animate()
     if (gameOver)
     {
         ctx.fillStyle = "white";
-        ctx.font = "30px Arial";
-        ctx.fillText("Game Over", CANVAS_WIDTH / 2 - 50, CANVAS_HEIGHT / 2);
+        ctx.font = '48px "Jersey 10", sans-serif';
+        ctx.fillText("Game Over", CANVAS_WIDTH / 2 - 100, CANVAS_HEIGHT / 2);
         return;
     }
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -183,13 +188,21 @@ function animate()
     player.y = Math.max(player.y + velocityY, 0);
     document.addEventListener("keydown", moveFigure);
 
-    ctx.fillStyle = "white";
-    ctx.font = "30px Arial";
-    ctx.fillText("Score: " + score, 5, 45);
+    // Only show score if overlays are not visible
+    if (
+        document.getElementById('characterSelection').style.display !== 'block' &&
+        document.getElementById('startOverlay').style.display !== 'flex'
+    ) {
+        ctx.font = '30px "Jersey 10", sans-serif';
+        ctx.fillStyle = "white";
+        ctx.fillText("Score: " + score, 5, 45);
+    }
 
     if (gameOver)
     {
-        ctx.fillText("Game Over", CANVAS_WIDTH / 2 - 50, CANVAS_HEIGHT / 2);
+        gameOverSound.play();
+        ctx.font = '48px "Jersey 10", sans-serif';
+        ctx.fillText("Game Over", CANVAS_WIDTH / 2 - 100, CANVAS_HEIGHT / 2);
     }
 
 };
@@ -236,6 +249,7 @@ function moveFigure(e)
     if (
         e.code == "Space" || e.code == "ArrowUp" || e.type === "mousedown")
     {
+        flySound.play();
         velocityY = -6;
 
         if (gameOver)
@@ -245,6 +259,7 @@ function moveFigure(e)
             score = 0;
             gameOver = false;
             velocityY = 0;
+            scoreSaved = false; // Reset here
             animate();
         }
     }
@@ -280,9 +295,7 @@ function drawStaticFrame() {
     pipeArray.forEach(pipe => {
         ctx.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
     });
-    ctx.fillStyle = "white";
-    ctx.font = "30px Arial";
-    ctx.fillText("Score: " + score, 5, 45);
+    
 }
 
 const characterFrames = {
@@ -313,16 +326,30 @@ function selectCharacter(type) {
 }
 
 document.getElementById('startGameBtn').addEventListener('click', function() {
+    buttonClick.play();
     document.getElementById('mainMenuOverlay').style.display = 'none';
     showCharacterSelection();
 });
 
-document.getElementById('charSelTriangle').onclick = () => selectCharacter('triangle');
-document.getElementById('charSelCircle').onclick   = () => selectCharacter('circle');
-document.getElementById('charSelCross').onclick    = () => selectCharacter('cross');
-document.getElementById('charSelSquare').onclick   = () => selectCharacter('square');
+document.getElementById('charSelTriangle').onclick = () => {
+    buttonClick.play();
+    selectCharacter('triangle');
+};
+document.getElementById('charSelCircle').onclick = () => {
+    buttonClick.play();
+    selectCharacter('circle');
+};
+document.getElementById('charSelCross').onclick = () => {
+    buttonClick.play();
+    selectCharacter('cross');
+};
+document.getElementById('charSelSquare').onclick = () => {
+    buttonClick.play();
+    selectCharacter('square');
+};
 
 document.getElementById('startBtn').addEventListener('click', function() {
+    buttonClick.play();
     document.getElementById('startOverlay').style.display = 'none';
     gamePaused = false;
     gameStarted = true;
@@ -347,7 +374,7 @@ function setMobilePhysics() {
     velocityX = -1.5;       // Slower pipe movement
     player.width = 48;      // Same size for consistency
     player.height = 48;
-    player.x = CANVAS_WIDTH / 8;
+    player.x = 20;
     player.y = CANVAS_HEIGHT / 2;
     pipeHeight = CANVAS_HEIGHT;
     pipeWidth = pipeHeight * (66 / 460);
